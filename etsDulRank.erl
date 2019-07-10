@@ -637,6 +637,9 @@ for(End, End, _Step, Fun, AccIn) ->
 for(Start, End, Step, Fun, AccIn) ->
     for(Start+Step, End, Step, Fun, Fun(Start, AccIn)).
 
+
+%%%%%%%%%%%%%%%%%%% 测试 %%%%%%%%%%%%%%%%%%%%%%%%%
+
 test() ->
     io:format("111~n"),
     new(a, 2, {?MODULE, f}),
@@ -664,16 +667,15 @@ test2() ->
             [{Index, rand:uniform()} | Acc]
         end,
     List = common:for(1, 5000000, Fun, []),
-
-    Time1 = mytime:getNowSeconds(),
+    Time1 = getNowSeconds(),
     new(rankTest, 1, {?MODULE, testSort}),
     [insert(rankTest, Item) || Item <- List],
-    Time2 = mytime:getNowSeconds(),
+    Time2 = getNowSeconds(),
     io:format("~p~n", [Time2 - Time1]),
 
     ets:new(etsTest, [set, protected, named_table, {keypos, #dulNode.k}, {read_concurrency, true}]),
     [etsInsert(etsTest, Item) || Item <- List],
-    Time3 = mytime:getNowSeconds(),
+    Time3 = getNowSeconds(),
     io:format("~p~n", [Time3 - Time2]),
     ok.
 
@@ -685,3 +687,7 @@ f({_, _, S}) ->
 
 testSort({_, S}) ->
     S.
+
+getNowSeconds() ->
+    {M, S, _} = os:timestamp(),
+    M * 1000000 + S.
